@@ -7,7 +7,7 @@ import json
 
 def D3_wellness_dialog_for_autoregressive():
   root_path = "./TK_data/T1_wellness"
-  root_out = "./TK_data/T0_data"
+  root_out = "./TK_data/TT_data"
   wellness_answer_file = root_path + "/T1D1_wellness_dialog_answer.txt"
   wellness_question_file = root_path + "/T1D2_wellness_dialog_question.txt"
   wellness_autoregressive_file = root_out + "/T1_wellness_dialog_for_autoregressive.txt"
@@ -38,7 +38,7 @@ def D3_wellness_dialog_for_autoregressive():
 
 def D1_tweet_dialog_dataset():
   root_path = "./TK_data/T5_twitter"
-  root_out = "./TK_data/T0_data"
+  root_out = "./TK_data/TT_data"
   tweet_file = root_path + "/T5_twitter.xlsx"
   tweet_file_output = root_out + "/T5_tweeter_"
 
@@ -61,7 +61,7 @@ def D1_tweet_dialog_dataset():
 
 def D1_national_dataset():
     FROM ="./TK_data/T3_national"
-    TO ="./TK_data/T0_data/T3_national_"
+    TO ="./TK_data/TT_data/T3_national_"
 
     number=1
     for json_path in glob.glob(FROM+"/JSON/*.json"):
