@@ -15,8 +15,6 @@ save_ckpt_path = f"{root_path}/TK_checkpoint/kogpt2-T0.pth"
 
 
 # STEP2-1. training configure
-n_epoch = 5         # Num of Epoch
-batch_size = 2      # 배치 사이즈
 ctx = "cuda" if torch.cuda.is_available() else "cpu"
 
 print("\n\nTK DEVICE CHECK : {}\n\n".format(ctx))
@@ -24,6 +22,8 @@ if ctx=='cpu':
     raise Exception('NOWANT CPU')
 device = torch.device(ctx)
 
+n_epoch = 10         # Num of Epoch
+batch_size = 1      # 배치 사이즈
 save_step = 100 # 학습 저장 주기
 learning_rate = 5e-5  # Learning Rate
 
@@ -49,7 +49,9 @@ for epoch in range(n_epoch):
         for i, data in enumerate(train_loader):
             optimizer.zero_grad()
             data = torch.stack(data)  # list of Tensor로 구성되어 있기 때문에 list를 stack을 통해 변환해준다.
+            #print("\n\nTEST1 : {}\n\n".format(data.shape)) #T[400,1]
             data = data.transpose(1, 0)
+            #print("\n\nTEST2 : {}\n\n".format(data.shape)) #T[1,400]
             data= data.to(ctx)
 
             #============================================REAL

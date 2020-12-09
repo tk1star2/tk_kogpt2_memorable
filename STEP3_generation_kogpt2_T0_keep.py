@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import torch
-from TK_utils.T1_kogpt2 import DialogKoGPT2
+from TK_utils.T0_kogpt2 import DialogKoGPT2
 from kogpt2_transformers import get_kogpt2_tokenizer
 
 # root_path='drive/My Drive/Colab Notebooks/dialogLM'
@@ -22,7 +22,8 @@ checkpoint = torch.load(save_ckpt_path, map_location=device)
 model = DialogKoGPT2()
 model.load_state_dict(checkpoint['model_state_dict'])
 
-model.eval()
+#model.eval()
+model.train()
 
 # STEP2-3. training configure
 tokenizer = get_kogpt2_tokenizer()
@@ -39,6 +40,9 @@ while 1:
   input_ids = torch.tensor([tokenizer.bos_token_id,]  + tokenized_indexs + [tokenizer.eos_token_id]).unsqueeze(0)
   # set top_k to 50
   sample_output = model.generate(input_ids=input_ids)
+  #------------------------TK TODO----------------------------
+
+  #-----------------------------------------------------------
 
 
   print("Answer: " + \

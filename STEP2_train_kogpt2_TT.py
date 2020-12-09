@@ -4,19 +4,39 @@ import torch
 
 from transformers.optimization import AdamW, get_cosine_schedule_with_warmup
 
-from TK_utils.T2_dataloader import CharDataset
+from TK_utils.TT_dataloader import CharDataset
 
 
 parser = argparse.ArgumentParser(description='Simsimi based on KoGPT-2')
 #DATA LOADER
+parser.add_argument('--chat',
+                    action='store_true',
+                    default=False,
+                    help='response generation on given user input')
+
+parser.add_argument('--sentiment',
+                    type=str,
+                    default='0',
+                    help='sentiment for system. 0 is neutral, 1 is negative, 2 is positive.')
+
+parser.add_argument('--model_params',
+                    type=str,
+                    default='model_chp/model_last.ckpt',
+                    help='model binary for starting chat')
+
+parser.add_argument('--train',
+                    action='store_true',
+                    default=False,
+                    help='for training')
+#-------------------------------------------------------------------
 parser.add_argument('--max-len',
                     type=int,
-                    default=32,
+                    default=1024,#32
                     help='max sentence length on input (default: 32)')
 
 parser.add_argument('--batch-size',
                     type=int,
-                    default=96,
+                    default=1,#96
                     help='batch size for training (default: 96)')
 #OPTIMIZER
 parser.add_argument('--lr',
@@ -27,10 +47,6 @@ parser.add_argument('--warmup_ratio',
                     type=float,
                     default=0.1,
                     help='warmup ratio')
-parser.add_argument('--sentiment',
-                    type=str,
-                    default='0',
-                    help='sentiment for system. 0 is neutral, 1 is negative, 2 is positive.')
 #???? + max_epochs?
 
 
@@ -48,6 +64,9 @@ class KoGPT2Chat(LightningModule):
     def __init__(self, args, **kwargs):
         super(KoGPT2Chat, self).__init__()
         self.hparams = args
+        # TK TODO
+        self.hparams.max_len = 1024
+
         self.kogpt2, self.vocab = get_pytorch_kogpt2_model()
         self.loss_function = torch.nn.CrossEntropyLoss(reduction='none')
 
@@ -82,12 +101,22 @@ class KoGPT2Chat(LightningModule):
         data = [item[0] for item in batch]
         mask = [item[1] for item in batch]
         label = [item[2] for item in batch]
+        '''
+        print("======================================================")
+        print("I : {}\n".format(data))
+        print("I : {}\n".format(len(data[0])))
+        print("I2 : {}\n".format(mask))
+        print("I2 : {}\n".format(len(mask[0])))
+        print("I3 : {}\n".format(label))
+        print("I3 : {}\n".format(len(label[0])))
+        print("======================================================")
+        '''
         return torch.LongTensor(data), torch.LongTensor(mask), torch.LongTensor(label)
 
     def train_dataloader(self):
         self.train_set = CharDataset(self.vocab, MAX_LEN=self.hparams.max_len)
         train_dataloader = DataLoader(
-            self.train_set, batch_size=self.hparams.batch_size, num_workers=2,
+            self.train_set, batch_size=self.hparams.batch_size, num_workers=12,
             shuffle=True, collate_fn=self._collate_fn)
         return train_dataloader
 
@@ -103,7 +132,7 @@ class KoGPT2Chat(LightningModule):
         optimizer = AdamW(optimizer_grouped_parameters,
                           lr=self.hparams.lr, correct_bias=False)
         # warm up lr
-        print("\n\n\n\nSO WHAT?!?!?!?!! {}\n\n\n\n".format(self.hparams.max_epochs))
+        #print("\n\n\n\nSO WHAT?!?!?!?!! {}\n\n\n\n".format(self.hparams.max_epochs))
 
         num_train_steps = len(self.train_dataloader()) * self.hparams.max_epochs
         num_warmup_steps = int(num_train_steps * self.hparams.warmup_ratio)
@@ -119,13 +148,21 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 if __name__ == "__main__":
+    torch.cuda.is_available()
+    ctx = "cuda" if torch.cuda.is_available() else "cpu"
+    print("\n\nTK DEVICE CHECK : {}\n\n".format(ctx))
+    if ctx=='cpu':
+        raise Exception('NOWANT CPU')
+    #ctx = 'cpu'
+    device = torch.device(ctx)
+    
     checkpoint_callback = ModelCheckpoint(
         verbose=True,
         save_last=True,
         save_top_k=1,
         monitor='loss',
         mode='min',
-        prefix='kogpt2-T2',
+        prefix='kogpt2-TT',
         dirpath='./TK_checkpoint/',
         filename='{epoch:02d}-{loss:.2f}'
     )
@@ -137,11 +174,11 @@ if __name__ == "__main__":
     MODEL = KoGPT2Chat(args)
     MODEL.train()
 
-    print("\n\nis this started?1\n\n")
+    #print("\n\nis this started?1\n\n")
     trainer = Trainer.from_argparse_args(args,
                                         checkpoint_callback=checkpoint_callback, 
                                         gradient_clip_val=1.0)
-    print("\n\nis this started?2\n\n")
+    #print("\n\nis this started?2\n\n")
     #============================================REAL
     trainer.fit(MODEL)
     #============================================END

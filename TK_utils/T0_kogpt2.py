@@ -7,7 +7,7 @@ class DialogKoGPT2(nn.Module):
     super(DialogKoGPT2, self).__init__()
     self.kogpt2 = get_kogpt2_model()
 
-  def generate(self,
+  def GET_OUTPUT(self,
                input_ids,
                do_sample=True,
                max_length= 60,
