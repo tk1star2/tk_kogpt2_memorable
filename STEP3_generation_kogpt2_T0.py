@@ -48,14 +48,14 @@ while 1:
 
     # set top_k to 50
     sample_output = model.GET_OUTPUT(input_ids=q_toked_T)
-    print("\n\n\nTK0 : {} & {}\n".format(q_toked_T.shape, sample_output.shape)) # T[1,3], T[3,60]
-    print("\n\n\nTK1-1 : {}\n".format(q_toked_T)) # T[[0, 1754, 1]]
-    print("\n\n\nTK1-2 : {}\n".format(sample_output))  # T[[0, 1754, 1, 0, 1335 .... 1]]
-    print("\n\n\nTK2 : {}\n".format(bos_token_id)) #[0]
-    print("\n\n\nTK3 : {}\n".format(eos_token_id)) #[1]
-    print("\n\n\nTK4 : {}\n".format(pad_token_id)) #[3]
-    print("\n\n\nTK5 : {}\n".format(len(tokenized_indexs))) #1
-    print("\n\n\nTK6 : {}\n".format(sample_output[0][len(tokenized_indexs)+2])) #0 ,start
+    #print("\n\n\nTK0 : {} & {}\n".format(q_toked_T.shape, sample_output.shape)) # T[1,3], T[3,60]
+    #print("\n\n\nTK1-1 : {}\n".format(q_toked_T)) # T[[0, 1754, 1]]
+    #print("\n\n\nTK1-2 : {}\n".format(sample_output))  # T[[0, 1754, 1, 0, 1335 .... 1]]
+    #print("\n\n\nTK2 : {}\n".format(bos_token_id)) #[0]
+    #print("\n\n\nTK3 : {}\n".format(eos_token_id)) #[1]
+    #print("\n\n\nTK4 : {}\n".format(pad_token_id)) #[3]
+    #print("\n\n\nTK5 : {}\n".format(len(tokenized_indexs))) #1
+    #print("\n\n\nTK6 : {}\n".format(sample_output[0][len(tokenized_indexs)+2])) #0 ,start
     #sample_output = model(input_ids=q_toked_T)
     #print("\n\n\nTK2 : {}\n".format(sample_output))
     DONE = len(tokenized_indexs)+2
@@ -65,13 +65,13 @@ while 1:
         else :
             DONE += 1
         
-    print("\n\n\nTK7 : {}\n".format(sample_output[0][DONE])) #1, end
+    #print("\n\n\nTK7 : {}\n".format(sample_output[0][DONE])) #1, end
     a_toked_T = sample_output[0][len(tokenized_indexs)+2:DONE+1].unsqueeze(0)
-    print("\n\n\nTK8 : {}\n".format(a_toked_T)) #T[[0, 47674, 8928, 119, 1]]
-    print("\n\n\nTK9 : {}\n".format(a_toked_T.shape)) #T[1, 14]
+    #print("\n\n\nTK8 : {}\n".format(a_toked_T)) #T[[0, 47674, 8928, 119, 1]]
+    #print("\n\n\nTK9 : {}\n".format(a_toked_T.shape)) #T[1, 14]
     qa_toked_T = torch.cat([a_toked_T,q_toked_T],dim=1)
 
-    print("\n\n\nTK10 : {}\n".format(qa_toked_T.shape)) #1, end
+    #print("\n\n\nTK10 : {}\n".format(qa_toked_T.shape)) #1, end
     
 
     #print("Answer: " + tokenizer.decode(sample_output[0].tolist()[len(tokenized_indexs)+1:],skip_special_tokens=True))

@@ -9,9 +9,9 @@ def D3_wellness_dialog_for_autoregressive():
   folder_path = "./TK_data/TT_data"
   output_path = "./TK_data/T0_data/T0_data.txt"
 
-  output_file = open(output_path, 'w')
-  output_file.close()
-  output_file = open(output_path, 'a', encoding='utf-8')
+  output_file = open(output_path, 'w', encoding='utf-8')
+  #output_file.close()
+  #output_file = open(output_path, 'a', encoding='utf-8')
 
 
 
@@ -23,6 +23,8 @@ def D3_wellness_dialog_for_autoregressive():
         answ_lines = file.readline()
         if not answ_lines:
             break
+        #print("\nTK:{}\n".format(ques_lines[:-1]))
+        #print("\nTK:{}\n".format(answ_lines[:-1]))
         output_file.write(ques_lines[:-1] + "    " + answ_lines[:-1] + "\n")
         ques_lines = answ_lines 
    

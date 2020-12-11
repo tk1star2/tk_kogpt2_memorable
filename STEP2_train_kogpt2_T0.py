@@ -10,6 +10,7 @@ from TK_utils.T0_kogpt2 import DialogKoGPT2
 torch.cuda.is_available()
 
 root_path='.'
+from_ckpt_path = f"{root_path}/TK_checkpoint/kogpt2-T0_from.pth"
 save_ckpt_path = f"{root_path}/TK_checkpoint/kogpt2-T0.pth"
 
 
@@ -22,17 +23,19 @@ if ctx=='cpu':
     raise Exception('NOWANT CPU')
 device = torch.device(ctx)
 
-n_epoch = 10         # Num of Epoch
+n_epoch = 3         # Num of Epoch
 batch_size = 1      # 배치 사이즈
-save_step = 100 # 학습 저장 주기
+save_step = 50000 # 학습 저장 주기
 learning_rate = 5e-5  # Learning Rate
 
 
 # STEP2-2. dataset & MODEL
 dataset= WellnessAutoRegressiveDataset()
 train_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
+checkpoint = torch.load(from_ckpt_path, map_location=device) #TEMP1
 
 model = DialogKoGPT2()
+model.load_state_dict(checkpoint['model_state_dict']) #TEMP2
 model.to(device)
 
 

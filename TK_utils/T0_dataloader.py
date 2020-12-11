@@ -11,7 +11,7 @@ class WellnessAutoRegressiveDataset(Dataset):
   """Wellness Auto Regressive Dataset"""
 
   #def __init__(self, MAX_LEN = 1024):
-  def __init__(self, MAX_LEN = 400):
+  def __init__(self, MAX_LEN = 1024):
     self.file_path = "./TK_data/T0_data/T0_data.txt"
     self.DATA = []
     self.MAX_LEN = MAX_LEN
@@ -48,6 +48,8 @@ class WellnessAutoRegressiveDataset(Dataset):
 
       #check padding LEN
       pad_token_len = MAX_LEN - q_len - a_len
+      if pad_token_len < 0:
+        continue
       if TK_MAX_SIZE < q_len + a_len:
         TK_MAX_SIZE = q_len+a_len
 
